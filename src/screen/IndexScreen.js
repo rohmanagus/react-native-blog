@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -11,7 +11,18 @@ import {Context} from '../context/BlogContext';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const IndexScreen = ({navigation}) => {
-  const {state, deleteBlogPost} = useContext(Context);
+  const {state, deleteBlogPost, getBlogPosts} = useContext(Context);
+  useEffect(() => {
+    getBlogPosts();
+
+    const listener = navigation.addListener('didFocus', () => {
+      getBlogPosts();
+    });
+
+    return () => {
+      listener.remove();
+    }
+  }, []);
 
   return (
     <View>
@@ -41,7 +52,7 @@ const IndexScreen = ({navigation}) => {
 IndexScreen.navigationOptions = ({navigation}) => {
   return {
     headerRight: (
-      <TouchableOpacity onPress={()=> navigation.navigate('Create') }>
+      <TouchableOpacity onPress={() => navigation.navigate('Create')}>
         <Icon style={styles.icon2} name="plus" />
       </TouchableOpacity>
     ),
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
     color: '#222',
     marginHorizontal: 5,
     marginVertical: 5,
-  }
+  },
 });
 
 export default IndexScreen;
